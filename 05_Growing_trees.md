@@ -82,3 +82,24 @@ Git only stores two file modes:
 export PATH="$PWD/bin:$PATH"
 export RUBYOPT="--disable gems" # only for this shell
 ```
+
+## Storing directories
+
+Git stores a directory mode as `40000` and ignores the full mode (`40755`), to only
+mark it's a directory. Directories have "execute" permissions, meaning you need to
+be able to traverse it to access the files in it. "Reading" a directory means listing files. To read a file, you need to have a "read" permission to the file and
+"execute" permissions on all the directories leading to it.
+
+It represents trees of files in a direct way - parent directory is a tree that contains a reference to the child directory tree. Since objects are hashed based on
+content, if we see two trees with te sae hash, we know their contents are exactly
+the same and we can skip them. It's a performance win for comparing repositories,
+downloading assets, and detecting that a tree has been move without changing files
+in it.
+
+This structure is called a Merkle tree (or a hash tree), and is also used in other
+systems, like blockchain.
+
+## Building a Merkle tree
+
+1. Recurse into subdirectories when checking files
+2. Build a recursive tree

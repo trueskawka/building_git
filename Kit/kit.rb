@@ -1,9 +1,11 @@
 require "fileutils"
 require "pathname"
 
-require_relative "./workspace"
-require_relative "./database"
 require_relative "./blob"
+require_relative "./database"
+require_relative "./entry"
+require_relative "./tree"
+require_relative "./workspace"
 
 # remove and return the first item from CLI arguments
 command = ARGV.shift
@@ -46,21 +48,28 @@ when "init"
 when "commit"
   # assume working directory is the repo location
   root_path = Pathname.new(Dir.getwd)
-  git_path = root_path.join(".git")
-  db_path = git_path.join("objects")
+  git_path  = root_path.join(".git")
+  db_path   = git_path.join("objects")
   
   # list the files in a directory with the Workspace
   # Workspace class is responsible for files in the working tree
   workspace = Workspace.new(root_path)
-  database = Database.new(db_path)
+  database  = Database.new(db_path)
 
-  workspace.list_files.each do |path|
+  entries = workspace.list_files.map do |path|
     data = workspace.read_file(path)
     # wrap a string thhat we got by reading a file
     blob = Blob.new(data)
     
-    database.store(blob) 
+    database.store(blob)
+
+    Entry.new(path, blob.oid)
   end
+
+  tree = Tree.new(entries)
+  database.store(tree)
+
+  puts "tree: #{ tree.oid }"
 
 # if the command is not init
 else

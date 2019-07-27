@@ -3,7 +3,7 @@
 Learning about Git by following "Building Git" book.
 
 The book uses `Jit` as the name for the learning implementation of Git, but I'm going to use `Kit`. It's a multi-language pun:
-- `kit` in English as arrangement/accessory (e.g. toolkit)
+- `kit` in English as `arrangement`/`accessory` (e.g. toolkit)
 - `kit` in Polish as `putty`
 - `kit` in Polish as `excuse`/`claptrap`
 

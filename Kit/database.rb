@@ -25,6 +25,7 @@ class Database
   def write_object(oid, content)
     # build the blob desitination path
     object_path = @pathname.join(oid[0..1], oid[2..-1])
+    return if File.exist?(object_path)
     # get directory name
     # could've done it with string manipulation, but that's hard to read
     # and brittle - better to use built-ins

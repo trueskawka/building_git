@@ -15,7 +15,7 @@ I think it fits pretty well in both languages. Also helps with naming clashes.
 |---------|:-----------------------------|-------|
 | 1       | Getting to know Git          | 26/07 |
 | 2       | The first commit	           | 26/07 |
-| 3       | Making history               |       |
+| 3       | Making history               | 27/07 |
 | 4       | Growing trees                |       |
 | 5       | The index                    |       |
 | 6       | Incremental change           |       |

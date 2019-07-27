@@ -37,3 +37,8 @@ to trees and blobs which are based on content hash).
 
 Two processes trying to change a reference at the same time is an error, as that
 can cause a race condition. We can work around it using a lockfile.
+
+## Improvements
+
+The `Database` class is writing every object it was given. On subsequent commits, many of the objects that make up the commit already exist. Let's avoid writing them
+if possible.

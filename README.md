@@ -2,7 +2,14 @@
 
 Learning about Git by following "Building Git" book.
 
-Schedule:
+The book uses `Jit` as the name for the learning implementation of Git, but I'm going to use `Kit`. It's a multi-language pun:
+- `kit` in English as arrangement/accessory (e.g. toolkit)
+- `kit` in Polish as `putty`
+- `kit` in Polish as `excuse`/`claptrap`
+
+I think it fits pretty well in both languages. Also helps with naming clashes.
+
+## Topics
 
 | Session | Topic                        | Done  |
 |---------|:-----------------------------|-------|

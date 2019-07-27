@@ -3,8 +3,6 @@ class Tree
   # Z*: encode entry.name as an arbitrary-length null-padded string
   # H40: encode entry.oid as a string of forty hexadecimal digits
   ENTRY_FORMAT = "A7Z*H40"
-  # non-executable file mode
-  MODE = "100644"
   
   attr_accessor :oid
   
@@ -21,7 +19,7 @@ class Tree
       # sort entries by name and convert to string
       # Array#pack takes an array and returns a string representing values
       # the ENTRY_FORMAT defines how each value gets represented
-      [MODE, entry.name, entry.oid].pack(ENTRY_FORMAT) 
+      [entry.mode, entry.name, entry.oid].pack(ENTRY_FORMAT) 
     end
 
     entries.join("")

@@ -72,3 +72,13 @@ regular file   no special     owner can      group can        other can
 Git only stores two file modes:
 - `100755` for executables
 - `100644` for everything else
+
+## Make `kit` executable
+
+1. Move `kit.rb` to `bin/kit`
+2. `chmod +x`
+3. Add environment variables:
+```
+export PATH="$PWD/bin:$PATH"
+export RUBYOPT="--disable gems" # only for this shell
+```

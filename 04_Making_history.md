@@ -27,3 +27,13 @@ and store it. And write the new commit's ID to `.git/HEAD`.
 The `Commit` object needs to:
 - be given the current value of `.git/HEAD`
 - store this value in a `parent` field if necessary
+
+## Safely updating `.git/HEAD`
+
+Files in `.git/objects/` are immutable, whereas `.git/refs` change constantly.
+Moreover, `.git/refs` files need to have stable, predictable names. Writes to them
+are atomic, but two processes writing to them won't have the same data (as opposed
+to trees and blobs which are based on content hash).
+
+Two processes trying to change a reference at the same time is an error, as that
+can cause a race condition. We can work around it using a lockfile.

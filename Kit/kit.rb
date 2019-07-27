@@ -6,6 +6,7 @@ require_relative "./blob"
 require_relative "./commit"
 require_relative "./database"
 require_relative "./entry"
+require_relative "./refs"
 require_relative "./tree"
 require_relative "./workspace"
 
@@ -57,6 +58,7 @@ when "commit"
   # Workspace class is responsible for files in the working tree
   workspace = Workspace.new(root_path)
   database  = Database.new(db_path)
+  refs      = Refs.new(git_path)
 
   entries = workspace.list_files.map do |path|
     data = workspace.read_file(path)
@@ -71,6 +73,7 @@ when "commit"
   tree = Tree.new(entries)
   database.store(tree)
 
+  parent  = refs.read_head
   # get author information from ENV variables
   name    = ENV.fetch("GIT_AUTHOR_NAME")
   email   = ENV.fetch("GIT_AUTHOR_EMAIL")
@@ -79,15 +82,12 @@ when "commit"
   # read the message from stdin (pipe the command)
   message = $stdin.read
 
-  commit = Commit.new(tree.oid, author, message)
+  commit = Commit.new(parent, tree.oid, author, message)
   database.store(commit)
+  refs.update_head(commit.oid)
 
-  # create or update a .git/HEAD file to point to the new commit
-  File.open(git_path.join("HEAD"), File::WRONLY | File::CREAT) do |file|
-    file.puts(commit.oid)
-  end
-
-  puts "[(root-commit) #{ commit.oid }] #{ message.lines.first }"
+  is_root = parent.nil? ? "(root-commit) " : ""
+  puts "[#{ is_root }#{ commit.oid }] #{ message.lines.first }"
   exit 0
 
 # if the command is not init

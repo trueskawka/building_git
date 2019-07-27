@@ -1,7 +1,9 @@
 require "fileutils"
 require "pathname"
 
+require_relative "./author"
 require_relative "./blob"
+require_relative "./commit"
 require_relative "./database"
 require_relative "./entry"
 require_relative "./tree"
@@ -69,7 +71,24 @@ when "commit"
   tree = Tree.new(entries)
   database.store(tree)
 
-  puts "tree: #{ tree.oid }"
+  # get author information from ENV variables
+  name    = ENV.fetch("GIT_AUTHOR_NAME")
+  email   = ENV.fetch("GIT_AUTHOR_EMAIL")
+  # pass author information and timestamp
+  author  = Author.new(name, email, Time.now)
+  # read the message from stdin (pipe the command)
+  message = $stdin.read
+
+  commit = Commit.new(tree.oid, author, message)
+  database.store(commit)
+
+  # create or update a .git/HEAD file to point to the new commit
+  File.open(git_path.join("HEAD"), File::WRONLY | File::CREAT) do |file|
+    file.puts(commit.oid)
+  end
+
+  puts "[(root-commit) #{ commit.oid }] #{ message.lines.first }"
+  exit 0
 
 # if the command is not init
 else

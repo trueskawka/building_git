@@ -1,6 +1,6 @@
 # Building Git
 
-Learning about Git by following "Building Git" book.
+Learning about Git by following "Building Git" book. It's a bit like Ikea for building Git.
 
 The book uses `Jit` as the name for the learning implementation of Git, but I'm going to use `Kit`. It's a multi-language pun:
 - `kit` in English as `arrangement`/`accessory` (e.g. toolkit)
@@ -14,7 +14,7 @@ I think it fits pretty well in both languages. Also helps with naming clashes.
 | Session | Topic                        | Done  |
 |---------|:-----------------------------|-------|
 | 1       | Getting to know Git          | 26/07 |
-| 2       | The first commit	           |       |
+| 2       | The first commit	           | 26/07 |
 | 3       | Making history               |       |
 | 4       | Growing trees                |       |
 | 5       | The index                    |       |

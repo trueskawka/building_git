@@ -109,6 +109,9 @@ in `.git/index`
 
 1. Add things to the index and commit will be unchanged
   - start with a single file
-  - store multiple entries
+    `rm -f .git/index* ; kit add lib/index.rb ; hexdump -C .git/index`
+  - store multiple entries 
+    `rm -f .git/index* ; kit add $(find bin lib -type f) ; git ls-files`
   - add files from directories
+    `kit add lib/database`
 2. Commit will read from index rather than the working tree.

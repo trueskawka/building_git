@@ -33,7 +33,12 @@ class Index
         stat.mtime.to_i, stat.mtime.nsec,
         stat.dev, stat.ino, mode, stat.uid, stat.gid, stat.size, 
         oid, flags, path)
-    end 
+    end
+
+    # encapsulate the path as it's used as a key
+    def key 
+      path
+    end
 
     def to_s
       # return an array of te values of string fields

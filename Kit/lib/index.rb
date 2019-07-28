@@ -1,4 +1,5 @@
 require "digest/sha1"
+require "set"
 
 require_relative "./index/entry"
 require_relative "./lockfile"
@@ -11,6 +12,8 @@ class Index
 
   def initialize(pathname)
     @entries = {}
+    # it's like a set that ensures a sorted order of ops
+    @keys = SortedSet.new
     @lockfile = Lockfile.new(pathname) 
   end
 
@@ -21,7 +24,7 @@ class Index
     # serialize the header data
     header = ["DIRC", 2, @entries.size].pack(HEADER_FORMAT)
     write(header)
-    @entries.each { |key, entry| write(entry.to_s) }
+    each_entry{ |entry| write(entry.to_s) }
     finish_write
 
     true 
@@ -29,7 +32,13 @@ class Index
 
   def add(pathname, oid, stat)
     entry = Entry.create(pathname, oid, stat)
-    @entries[pathname.to_s] = entry
+    @keys.add(entry.key)
+    @entries[entry.key] = entry
+  end
+
+  # iterate over entries in the sorted order
+  def each_entry
+    @keys.each { |key| yield @entries[key] }
   end
 
   # add content to Digest so we can SHA-1 the index

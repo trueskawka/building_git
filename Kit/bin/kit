@@ -98,14 +98,16 @@ when "add"
   workspace = Workspace.new(root_path)
   database  = Database.new(git_path.join("objects"))
   index     = Index.new(git_path.join("index"))
-  
-  path = Pathname.new(ARGV.first)
-  data = workspace.read_file(path)
-  stat = workspace.stat_file(path)
-  
-  blob = Database::Blob.new(data)
-  database.store(blob)
-  index.add(path, blob.oid, stat)
+
+  ARGV.each do |path|    
+    path = Pathname.new(path)
+    data = workspace.read_file(path)
+    stat = workspace.stat_file(path)
+    
+    blob = Database::Blob.new(data)
+    database.store(blob)
+    index.add(path, blob.oid, stat)
+  end
 
   index.write_updates 
   exit 0

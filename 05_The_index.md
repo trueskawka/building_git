@@ -109,4 +109,5 @@ in `.git/index`
 
 1. Add things to the index and commit will be unchanged
   - start with a single file
+  - store multiple entries
 2. Commit will read from index rather than the working tree.

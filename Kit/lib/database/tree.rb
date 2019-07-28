@@ -2,8 +2,7 @@ require_relative "../entry"
 
 class Database
   class Tree
-    # A7: encode mode as seven-byte string space-padded on the right
-    # Z*: encode entry.name as an arbitrary-length null-padded string
+    # Z*: encode entry.mode and name as an arbitrary-length null-padded string
     # H40: encode entry.oid as a string of forty hexadecimal digits
     ENTRY_FORMAT = "Z*H40"
     

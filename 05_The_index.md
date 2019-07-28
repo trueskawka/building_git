@@ -104,3 +104,9 @@ Git `add`:
 - stores file as a blob in `.git/objects`
 - adds a reference to that blo along with a cache of the file's current metadata
 in `.git/index`
+
+## Basic `add` implementation
+
+1. Add things to the index and commit will be unchanged
+  - start with a single file
+2. Commit will read from index rather than the working tree.

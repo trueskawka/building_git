@@ -99,14 +99,19 @@ when "add"
   database  = Database.new(git_path.join("objects"))
   index     = Index.new(git_path.join("index"))
 
-  ARGV.each do |path|    
-    path = Pathname.new(path)
-    data = workspace.read_file(path)
-    stat = workspace.stat_file(path)
-    
-    blob = Database::Blob.new(data)
-    database.store(blob)
-    index.add(path, blob.oid, stat)
+  ARGV.each do |path|
+    # every element of ARGV can be a path
+    path = Pathname.new(File.expand_path(path))
+
+    # get a list of paths relative to root
+    workspace.list_files(path).each do |pathname|
+      data = workspace.read_file(pathname)
+      stat = workspace.stat_file(pathname)
+      
+      blob = Database::Blob.new(data)
+      database.store(blob)
+      index.add(path, blob.oid, stat)
+    end
   end
 
   index.write_updates 

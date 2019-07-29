@@ -45,6 +45,15 @@ class Index
       Entry.new(*data.unpack(ENTRY_FORMAT))
     end
 
+    def parent_directories
+      # return all but the last item
+      Pathname.new(path).descend.to_a[0..-2]
+    end
+
+    def basename
+      Pathname.new(path).basename
+    end
+
     def to_s
       # return an array of te values of string fields
       # in the order defined in Struct.new

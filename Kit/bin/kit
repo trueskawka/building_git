@@ -55,23 +55,13 @@ when "commit"
   
   # list the files in a directory with the Workspace
   # Workspace class is responsible for files in the working tree
-  workspace = Workspace.new(root_path)
   database  = Database.new(db_path)
+  index     = Index.new(git_path.join("index"))
   refs      = Refs.new(git_path)
 
-  entries = workspace.list_files.map do |path|
-    data = workspace.read_file(path)
-    # wrap a string thhat we got by reading a file
-    blob = Database::Blob.new(data)
-    
-    database.store(blob)
-
-    stat = workspace.stat_file(path)
-    Entry.new(path, blob.oid, stat)
-  end
-
-  root = Database::Tree.build(entries)
-  # traverse the recursive tree and store each subtree
+  index.load
+  
+  root = Database::Tree.build(index.each_entry)
   root.traverse { |tree| database.store(tree) }
 
   parent  = refs.read_head

@@ -1,5 +1,3 @@
-require_relative "../entry"
-
 class Database
   class Tree
     # Z*: encode entry.mode and name as an arbitrary-length null-padded string
@@ -17,49 +15,35 @@ class Database
     end
 
     def mode
-      Entry::DIRECTORY_MODE
+      040000
     end
 
     def to_s
       entries = @entries.map do |name, entry|
-        # sort entries by name and convert to string
-        # Array#pack takes an array and returns a string representing values
-        # the ENTRY_FORMAT defines how each value gets represented
-        ["#{ entry.mode } #{ name }", entry.oid].pack(ENTRY_FORMAT) 
+        # convert mode number to string
+        mode = entry.mode.to_s(8)
+        ["#{ mode } #{ name }", entry.oid].pack(ENTRY_FORMAT)
       end
 
       entries.join("")
     end
 
     def self.build(entries)
-      # forcing a sort order ensures the hash will stay the same
-      # Ruby sorts pathnames and strings differently
-      # so in order to get the right sorting, we need to make them strings
-      # Git first sorts the file list for the project, and then builds a tree
-      entries = entries.sort_by { |entry| entry.name.to_s }
-      root    = Tree.new
-      
-      entries.each do |entry|
-        # iterator that yields each component of a pathname
-        # to_a turns it into an array
-        path = entry.name.each_filename.to_a
-        # get the last element of the path
-        name = path.pop
-        root.add_entry(path, name, entry)
+      root = Tree.new
+
+      entries.each do |entry| 
+        root.add_entry(entry.parent_directories, entry)
       end
-      
+
       root
     end
 
-    def add_entry(path, name, entry) 
-      if path.empty?
-        @entries[name] = entry 
+    def add_entry(parents, entry) 
+      if parents.empty?
+        @entries[entry.basename] = entry 
       else
-        # create a new tree with the first element of path
-        # guarted ||= - nothing happens if it already exists
-        tree = @entries[path.first] ||= Tree.new
-        # add elements to the new tree
-        tree.add_entry(path.drop(1), name, entry) 
+        tree = @entries[parents.first.basename] ||= Tree.new
+        tree.add_entry(parents.drop(1), entry) 
       end
     end
 

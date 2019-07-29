@@ -1,16 +1,17 @@
 class Index
-  # N10 - ten 32-bit unsigned big-endian numbers
-  # H40 - 40-char hex string
-  # n - 16-bit unsigned endian number
-  # Z* - null-terminated string
-  ENTRY_FORMAT = "N10H40nZ*"
-  ENTRY_BLOCK = 8
-
   # octal numbers, stored as numbers
   REGULAR_MODE    = 0100644 
   EXECUTABLE_MODE = 0100755
   # hexadecimal
   MAX_PATH_SIZE   = 0xfff
+
+  # N10 - ten 32-bit unsigned big-endian numbers
+  # H40 - 40-char hex string
+  # n - 16-bit unsigned endian number
+  # Z* - null-terminated string
+  ENTRY_FORMAT   = "N10H40nZ*"
+  ENTRY_BLOCK    = 8
+  ENTRY_MIN_SIZE = 64
 
   entry_fields = [
     :ctime, :ctime_nsec,
@@ -38,6 +39,10 @@ class Index
     # encapsulate the path as it's used as a key
     def key 
       path
+    end
+
+    def self.parse(data)
+      Entry.new(*data.unpack(ENTRY_FORMAT))
     end
 
     def to_s

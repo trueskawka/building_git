@@ -99,6 +99,8 @@ when "add"
   database  = Database.new(git_path.join("objects"))
   index     = Index.new(git_path.join("index"))
 
+  index.load_for_update
+
   ARGV.each do |path|
     # every element of ARGV can be a path
     path = Pathname.new(File.expand_path(path))
@@ -110,7 +112,7 @@ when "add"
       
       blob = Database::Blob.new(data)
       database.store(blob)
-      index.add(path, blob.oid, stat)
+      index.add(pathname, blob.oid, stat)
     end
   end
 

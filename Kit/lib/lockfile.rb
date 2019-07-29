@@ -7,6 +7,8 @@ class Lockfile
   def initialize(path)
     @file_path = path
     @lock_path = path.sub_ext(".lock")
+
+    @lock = nil
   end
 
   def hold_for_update 
@@ -23,19 +25,21 @@ class Lockfile
     end
     true
     
-    # catch file already exists
-    rescue Errno::EEXIST
-      false
-    # if the parent directory doesn't exist
-    # catch and convert
-    rescue Errno::ENOENT => error
-      raise MissingParent, error.message
-    rescue Errno::EACCES => error
-      raise NoPermission, error.message 
+  # catch file already exists
+  rescue Errno::EEXIST
+    false
+  # if the parent directory doesn't exist
+  # catch and convert
+  rescue Errno::ENOENT => error
+    raise MissingParent, error.message
+  rescue Errno::EACCES => error
+    raise NoPermission, error.message
   end
 
   # write to the lock file
   def write(string)
+    # puts @lock_path
+    # puts @lock
     raise_on_stale_lock
     @lock.write(string)
   end
@@ -45,8 +49,18 @@ class Lockfile
   # remove lock
   def commit
     raise_on_stale_lock
+
     @lock.close
     File.rename(@lock_path, @file_path)
+    @lock = nil
+  end
+
+  # remove the lockfile and free the lock
+  def rollback
+    raise_on_stale_lock
+    
+    @lock.close
+    File.unlink(@lock_path)
     @lock = nil
   end
 
